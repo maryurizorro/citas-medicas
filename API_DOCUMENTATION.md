@@ -1,180 +1,128 @@
-# Documentación de la API - Sistema de Citas Médicas
+# Sistema de Citas Médicas - API Laravel
 
-## Base URL
-```
-http://localhost:8000/api
-```
+Este es un sistema de gestión de citas médicas desarrollado con Laravel que proporciona una API REST completa para manejar médicos, pacientes y citas.
 
-## Autenticación
-La API utiliza Laravel Sanctum para autenticación. Para rutas protegidas, incluye el token Bearer en el header:
-```
-Authorization: Bearer {token}
-```
+## 🚀 Características
 
-## Endpoints
+- *Gestión de Médicos*: CRUD completo para médicos con especialidades
+- *Gestión de Pacientes*: CRUD completo para pacientes
+- *Gestión de Citas*: CRUD completo para citas con estados (pendiente, confirmada, cancelada)
+- *Validaciones*: Validaciones robustas para evitar conflictos de horarios
+- *Relaciones*: Relaciones Eloquent entre entidades
+- *API REST*: Endpoints RESTful bien documentados
 
-### Citas
+## 📋 Requisitos
 
-#### Listar todas las citas
-- **GET** `/listarCitas`
-- **Descripción**: Obtiene todas las citas con información de paciente y médico
-- **Respuesta**: Array de citas
+- PHP 8.1 o superior
+- Composer
+- MySQL 5.7 o superior
+- Laravel 10.x
 
-#### Crear cita
-- **POST** `/crearCita`
-- **Body**:
-```json
-{
-    "paciente_id": 1,
-    "medico_id": 1,
-    "fecha": "2024-01-15 10:00:00",
-    "observaciones": "Consulta de rutina"
-}
-```
+## 🛠 Instalación
 
-#### Obtener cita específica
-- **GET** `/cita/{id}`
-- **Descripción**: Obtiene una cita específica con información de paciente y médico
+1.  *Clonar el repositorio*
+    bash
+    git clone <url-del-repositorio>
+    cd citas
+    
 
-#### Actualizar cita
-- **PUT** `/actualizarCita/{id}`
-- **Body**:
-```json
-{
-    "fecha": "2024-01-15 11:00:00",
-    "estado": "confirmada",
-    "observaciones": "Consulta reprogramada"
-}
-```
+2.  *Instalar dependencias*
+    bash
+    composer install
+    
 
-#### Eliminar cita
-- **DELETE** `/eliminarCita/{id}`
+3.  *Configurar la base de datos*
+    
+    Copia el archivo .env.example a .env:
+    bash
+    cp .env.example .env
+    
+    
+    Edita el archivo .env con tu configuración de base de datos:
+    env
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=citas_medicas
+    DB_USERNAME=root
+    DB_PASSWORD=tu_password
+    
 
-#### Citas por estado
-- **GET** `/citasPendientes` - Citas con estado "pendiente"
-- **GET** `/citasConfirmadas` - Citas con estado "confirmada"
-- **GET** `/citasCanceladas` - Citas con estado "cancelada"
+4.  *Generar clave de aplicación*
+    bash
+    php artisan key:generate
+    
 
-#### Citas por filtros
-- **GET** `/citasPorMedico/{medico_id}` - Citas de un médico específico
-- **GET** `/citasPorPaciente/{paciente_id}` - Citas de un paciente específico
-- **GET** `/citasPorFecha/{fecha}` - Citas en una fecha específica (formato: YYYY-MM-DD)
-- **GET** `/citasEntreFechas/{fecha_inicio}/{fecha_fin}` - Citas entre dos fechas
+5.  *Ejecutar migraciones*
+    bash
+    php artisan migrate
+    
 
-#### Acciones de cita
-- **PUT** `/confirmarCita/{id}` - Confirma una cita
-- **PUT** `/cancelarCita/{id}` - Cancela una cita
+6.  *Poblar la base de datos con datos de prueba*
+    bash
+    php artisan db:seed
+    
+
+7.  *Iniciar el servidor*
+    bash
+    php artisan serve
+    
+
+## 🗄 Estructura de la Base de Datos
+
+### Tabla: medicos
+- id - Clave primaria
+- nombre - Nombre del médico
+- apellido - Apellido del médico
+- especialidad - Especialidad médica
+- email - Email único del médico
+- created_at, updated_at - Timestamps
+
+### Tabla: pacientes
+- id - Clave primaria
+- nombre - Nombre del paciente
+- apellido - Apellido del paciente
+- email - Email único del paciente
+- telefono - Teléfono del paciente (opcional)
+- created_at, updated_at - Timestamps
+
+### Tabla: citas
+- id - Clave primaria
+- paciente_id - Clave foránea a pacientes
+- medico_id - Clave foránea a médicos
+- fecha - Fecha y hora de la cita
+- estado - Estado de la cita (pendiente, confirmada, cancelada)
+- observaciones - Observaciones adicionales (opcional)
+- created_at, updated_at - Timestamps
+
+## 📡 Endpoints de la API
 
 ### Médicos
-
-#### Listar todos los médicos
-- **GET** `/listarMedicos`
-
-#### Crear médico
-- **POST** `/crearMedico`
-- **Body**:
-```json
-{
-    "nombre": "Dr. Juan",
-    "apellido": "Pérez",
-    "especialidad": "Cardiología",
-    "email": "juan.perez@hospital.com"
-}
-```
-
-#### Obtener médico específico
-- **GET** `/medico/{id}`
-
-#### Actualizar médico
-- **PUT** `/actualizarMedico/{id}`
-
-#### Eliminar médico
-- **DELETE** `/eliminarMedico/{id}`
-
-#### Médicos por especialidad
-- **GET** `/medicosPorEspecialidad/{especialidad}`
-
-#### Médicos disponibles
-- **GET** `/medicosDisponibles/{fecha}` - Médicos disponibles en una fecha específica
+- GET /api/listarMedicos - Obtener todos los médicos
+- POST /api/crearMedico - Crear nuevo médico
+- GET /api/medico/{id} - Obtener médico específico
+- PUT /api/actualizarMedico/{id} - Actualizar médico
+- DELETE /api/eliminarMedico/{id} - Eliminar médico
+- GET /api/medicosPorEspecialidad/{especialidad} - Obtener médicos por especialidad
 
 ### Pacientes
+- GET /api/listarPacientes - Obtener todos los pacientes
+- POST /api/crearPaciente - Crear nuevo paciente
+- GET /api/paciente/{id} - Obtener paciente específico
+- PUT /api/actualizarPaciente/{id} - Actualizar paciente
+- DELETE /api/eliminarPaciente/{id} - Eliminar paciente
 
-#### Listar todos los pacientes
-- **GET** `/listarPacientes`
-
-#### Crear paciente
-- **POST** `/crearPaciente`
-- **Body**:
-```json
-{
-    "nombre": "María",
-    "apellido": "García",
-    "email": "maria.garcia@email.com",
-    "telefono": "123456789"
-}
-```
-
-#### Obtener paciente específico
-- **GET** `/paciente/{id}`
-
-#### Actualizar paciente
-- **PUT** `/actualizarPaciente/{id}`
-
-#### Eliminar paciente
-- **DELETE** `/eliminarPaciente/{id}`
-
-#### Pacientes por médico
-- **GET** `/pacientesPorMedico/{medico_id}` - Pacientes que han tenido citas con un médico específico
-
-### Especialidades
-
-#### Listar todas las especialidades
-- **GET** `/listarEspecialidades`
-
-#### Crear especialidad
-- **POST** `/crearEspecialidad`
-- **Body**:
-```json
-{
-    "nombre": "Cardiología",
-    "descripcion": "Especialidad médica que se encarga del corazón y sistema cardiovascular"
-}
-```
-
-#### Obtener especialidad específica
-- **GET** `/especialidad/{id}`
-
-#### Actualizar especialidad
-- **PUT** `/actualizarEspecialidad/{id}`
-
-#### Eliminar especialidad
-- **DELETE** `/eliminarEspecialidad/{id}`
-
-### Usuarios
-
-#### Listar todos los usuarios
-- **GET** `/listarUsuarios`
-
-#### Crear usuario
-- **POST** `/crearUsuario`
-- **Body**:
-```json
-{
-    "nombre": "Admin",
-    "email": "admin@hospital.com",
-    "password": "password123",
-    "rol": "admin"
-}
-```
-
-#### Obtener usuario específico
-- **GET** `/usuario/{id}`
-
-#### Actualizar usuario
-- **PUT** `/actualizarUsuario/{id}`
-
-#### Eliminar usuario
-- **DELETE** `/eliminarUsuario/{id}`
+### Citas
+- GET /api/listarCitas - Obtener todas las citas
+- POST /api/crearCita - Crear nueva cita
+- GET /api/cita/{id} - Obtener cita específica
+- PUT /api/actualizarCita/{id} - Actualizar cita
+- DELETE /api/eliminarCita/{id} - Eliminar cita
+- GET /api/citasPendientes - Obtener citas pendientes
+- GET /api/citasConfirmadas - Obtener citas confirmadas
+- GET /api/citasCanceladas - Obtener citas canceladas
+- GET /api/citasPorMedico/{medico_id} - Obtener citas por médico
+- GET /api/citasPorPaciente/{paciente_id} - Obtener citas por paciente
 
 ## Códigos de Respuesta
 
@@ -184,32 +132,3 @@ Authorization: Bearer {token}
 - **404**: Not Found - Recurso no encontrado
 - **422**: Unprocessable Entity - Error de validación
 - **500**: Internal Server Error - Error del servidor
-
-## Ejemplos de Uso
-
-### Crear una cita
-```bash
-curl -X POST http://localhost:8000/api/crearCita \
-  -H "Content-Type: application/json" \
-  -d '{
-    "paciente_id": 1,
-    "medico_id": 1,
-    "fecha": "2024-01-15 10:00:00",
-    "observaciones": "Consulta de rutina"
-  }'
-```
-
-### Obtener citas pendientes
-```bash
-curl -X GET http://localhost:8000/api/citasPendientes
-```
-
-### Confirmar una cita
-```bash
-curl -X PUT http://localhost:8000/api/confirmarCita/1
-```
-
-### Obtener médicos disponibles
-```bash
-curl -X GET http://localhost:8000/api/medicosDisponibles/2024-01-15
-```

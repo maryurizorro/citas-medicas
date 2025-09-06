@@ -45,9 +45,9 @@ Este es un sistema de gestión de citas médicas desarrollado con Laravel que pr
    DB_PORT=3306
    DB_DATABASE=citas_medicas
    DB_USERNAME=root
-   DB_PASSWORD=tu_password
+   DB_PASSWORD=tu_password![alt text](image.png)
    ```
-
+![alt text](image-1.png)
 4. **Generar clave de aplicación**
    ```bash
    php artisan key:generate
